@@ -1,37 +1,24 @@
-# app.py
-import streamlit as st
 import pickle
-import os
+import streamlit as st
 import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
+import sklearn
 
-# --- Load the KNN model safely ---
-model_path = os.path.join(os.path.dirname(__file__), "knn_model.pkl")
+# Load the trained KNN model
+with open("knn_model.pkl", "rb") as f:
+    model = pickle.load(f)
 
-try:
-    with open(model_path, "rb") as f:
-        knn_model = pickle.load(f)
-except FileNotFoundError:
-    st.error("Error: knn_model.pkl file not found!")
-    st.stop()
+st.title("📱 Smartphone Addiction Prediction App")
 
-st.title("KNN Classifier Demo")
+# Input fields
+daily_usage = st.number_input("Daily Usage Hours", min_value=0.0, step=0.1)
+social_media = st.number_input("Time on Social Media (hrs)", min_value=0.0, step=0.1)
+gaming = st.number_input("Time on Gaming (hrs)", min_value=0.0, step=0.1)
+apps_used = st.number_input("Apps Used Daily", min_value=0, step=1)
+phone_checks = st.number_input("Phone Checks Per Day", min_value=0, step=1)
+sleep_hours = st.number_input("Sleep Hours", min_value=0.0, step=0.1)
 
-# --- Example input fields ---
-st.write("Enter features to predict:")
-feature1 = st.number_input("Feature 1")
-feature2 = st.number_input("Feature 2")
-feature3 = st.number_input("Feature 3")
-# Add more features as per your model
-
-input_data = np.array([[feature1, feature2, feature3]])
-
-# --- Optionally scale input if your model was trained on scaled data ---
-# scaler = StandardScaler()
-# input_data = scaler.fit_transform(input_data)  # Only if you need scaling
-
-# --- Make prediction ---
-if st.button("Predict"):
-    prediction = knn_model.predict(input_data)
-    st.success(f"Predicted Class: {prediction[0]}")
+# Predict button
+if st.button("Predict Addiction Level"):
+    input_data = np.array([[daily_usage, social_media, gaming, apps_used, phone_checks, sleep_hours]])
+    prediction = model.predict(input_data)
+    st.success(f"Predicted Addiction Level: {prediction[0]:.2f}")
