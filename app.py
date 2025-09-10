@@ -1,6 +1,7 @@
 import pickle
 import streamlit as st
 import numpy as np
+import sklearn
 
 # Load the trained KNN model
 with open("knn_model.pkl", "rb") as f:
